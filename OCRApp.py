@@ -46,6 +46,28 @@ class OCRApp:
         img = self.getImagePath()
         if img:
             try:
+                self.ui.textEdit.clear()
+                print('extracting text')
+                self.ui.progressBar.show()
+                self.ui.progressBar.setValue(0)
+                self.ui.extractBtn.setText('Extracting... Please Wait.')
+                image = cv2.imread(img)
+                self.ui.progressBar.setValue(10)
+                rgb = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
+                self.ui.progressBar.setValue(20)
+                text = pytesseract.image_to_string(rgb)
+                self.ui.progressBar.setValue(90)
+                if text=='':
+                    print('No text found in image')
+                    self.ui.textEdit.setHtml(f'<html><p><b>No Text Found in reading Image "{img}"<html/>')
+                else:
+                    self.ui.textEdit.setText(text)
+                    self.ui.progressBar.setValue(100)
+                self.ui.extractBtn.setText('Extract')
+                self.ui.progressBar.setValue(0)
+                self.ui.progressBar.hide()
+            except Exception as e:
+                print(e)
 
         else:
             print('Please select any Image')
